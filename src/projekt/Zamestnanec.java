@@ -1,5 +1,8 @@
 package projekt;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class Zamestnanec {
 	private int id;
 	private String meno;
@@ -7,6 +10,8 @@ public class Zamestnanec {
 	private int rokNarodenia;
 	private int profesia;
 	private String strProfesia;
+	private static List<Spolupraca> spoluprace;
+	
 
 	public Zamestnanec(int id, String meno, String priezvisko, int rokNarodenia, int profesia, String strProfesia) {
 		this.id = id;
@@ -14,7 +19,8 @@ public class Zamestnanec {
 		this.priezvisko = priezvisko;
 		this.rokNarodenia = rokNarodenia;
 		this.profesia = profesia;
-		this.strProfesia = strProfesia;								
+		this.strProfesia = strProfesia;	
+		spoluprace = new ArrayList<>();
 	}
 	
 	public void vypisInfo() {
@@ -35,5 +41,13 @@ public class Zamestnanec {
 	
 	public int getProfesia() {
 		return profesia;
+	}
+	
+	public List<Spolupraca> getSpoluprace() {
+		return spoluprace;
+	}
+	
+	public void novaSpolupraca(Spolupraca sp) {
+		spoluprace.add(sp);
 	}
 }

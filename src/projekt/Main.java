@@ -16,7 +16,9 @@ public class Main {
 		System.out.println("0 : Ukoncenie programu");
 		System.out.println("1 : Pridanie noveho zamestnanca");
 		System.out.println("2 : Odstranenie zamestnanca");
-		System.out.println("3 : Vypis zamestnancov"); // musi byt abecedne + rozdelene podla profesie
+		System.out.println("3 : Vyhladanie zamestnanca podla ID");
+		System.out.println("4 : Vypis zamestnancov"); // musi byt abecedne + rozdelene podla profesie
+		System.out.println("5 : Vytvorenie novej spoluprace");
 		
 		int volba = sc.nextInt();
 		
@@ -33,7 +35,7 @@ public class Main {
 					int profesia = sc.nextInt();
 					
 					String strProfesia;
-					if(profesia == 1) {
+					if(profesia == 1) {	
 						strProfesia = "Datovy analytik";
 					} else {
 						strProfesia = "Bezpecnostny specialista";
@@ -45,18 +47,36 @@ public class Main {
 				case 2:
 					System.out.println("---ODSTRANENIE ZAMESTNANCA---");
 					System.out.println("ID zamestnanca: ");
-					int id = sc.nextInt();
-					
-					db.odstranZamestnanca(id);
+					db.odstranZamestnanca(sc.nextInt());
+					System.out.println("");
 					break;
 					
 				case 3:
+					System.out.println("---VYHLADANIE ZAMESTNANCA---");
+					System.out.println("ID zamestnanca: ");
+					db.vyhladavac(sc.nextInt());
+					System.out.println("");
+					break;
+						
+				case 4:
 					System.out.println("---ZOZNAM ZAMESTNANCOV---");
 					db.vypisZamestnancov();
 					System.out.println("");
 					break;
 					
-				case 4:
+				case 5:
+					System.out.println("---NOVA SPOLUPRACA---");
+					System.out.println("Id zamestnanca: ");
+					int idZam1 = sc.nextInt();
+					System.out.println("Id kolegu: ");
+					int idZam2 = sc.nextInt();
+					System.out.println("Uroven spoluprace (zla/priemerna/dobra)");
+					String uroven = sc.next();
+					
+					db.novaSpolupraca(idZam1, idZam2, uroven);
+					System.out.println("");
+					break;
+				case 6:
 					break;
 				case 0:
 					run=false;
