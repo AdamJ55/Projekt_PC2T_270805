@@ -17,8 +17,9 @@ public class Main {
 		System.out.println("1 : Pridanie noveho zamestnanca");
 		System.out.println("2 : Odstranenie zamestnanca");
 		System.out.println("3 : Vyhladanie zamestnanca podla ID");
-		System.out.println("4 : Vypis zamestnancov"); // musi byt abecedne + rozdelene podla profesie
-		System.out.println("5 : Vytvorenie novej spoluprace");
+		System.out.println("4 : Vypis databazy zamestnancov"); // musi byt abecedne + ROZDELENE PODLA PROFESIE
+		System.out.println("5 : Vypis poctu zamestnancov v skupinach"); 
+		System.out.println("6 : Vytvorenie novej spoluprace");
 		
 		int volba = sc.nextInt();
 		
@@ -63,8 +64,14 @@ public class Main {
 					db.vypisZamestnancov();
 					System.out.println("");
 					break;
-					
+				
 				case 5:
+					System.out.println("---POCET ZAMESTNANCOV V SKUPINACH---");
+					db.pocetVSkupinach();
+					System.out.println("");
+					break;
+					
+				case 6:
 					System.out.println("---NOVA SPOLUPRACA---");
 					System.out.println("Id zamestnanca: ");
 					int idZam1 = sc.nextInt();
@@ -76,7 +83,7 @@ public class Main {
 					db.novaSpolupraca(idZam1, idZam2, uroven);
 					System.out.println("");
 					break;
-				case 6:
+				case 7:
 					break;
 				case 0:
 					run=false;

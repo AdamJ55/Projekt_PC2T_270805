@@ -10,7 +10,7 @@ public class Zamestnanec {
 	private int rokNarodenia;
 	private int profesia;
 	private String strProfesia;
-	private static List<Spolupraca> spoluprace;
+	private List<Spolupraca> spoluprace;
 	
 
 	public Zamestnanec(int id, String meno, String priezvisko, int rokNarodenia, int profesia, String strProfesia) {
@@ -49,5 +49,14 @@ public class Zamestnanec {
 	
 	public void novaSpolupraca(Spolupraca sp) {
 		spoluprace.add(sp);
+	}
+	
+	public void odstranitSpolupracu(int idKolegu) {
+		for(int i = 0; i < spoluprace.size(); i++) {
+			if(spoluprace.get(i).getIdKolegu() == idKolegu) {
+				spoluprace.remove(i);
+				i--;
+			}
+		}
 	}
 }

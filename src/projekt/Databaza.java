@@ -30,6 +30,9 @@ public class Databaza {
 	//odobratie zamestnanca z databazy
 	public void odstranZamestnanca(int id) {
 		zoznamZamestnancov.remove(id);
+		for(Zamestnanec zam : zoznamZamestnancov.values()) {
+			zam.odstranitSpolupracu(id);
+		}
 	}
 	
 	//vypis zamestnancov
@@ -73,17 +76,57 @@ public class Databaza {
 	
 	
 	
-	public void novaSpolupraca(int idZam1, int idZam2, String uroven) {
+	public void novaSpolupraca(int idZam1, int idZam2, String uroven) { //OPRAVENE
 		Zamestnanec Zam1 = zoznamZamestnancov.get(idZam1);
 		Zamestnanec Zam2 = zoznamZamestnancov.get(idZam2);
 		if(Zam1 == null || Zam2 == null) {
-			System.out.println("CHYBA: Zamestnanec s ID ktore ste zadali neexistuje"); //PONECHAT DO BUDUCNA SYNTAX CHYB
+			System.out.println("CHYBA: Zamestnanec s ID ktore ste zadali neexistuje");
 			return;
 		}
-		Zam1.novaSpolupraca(new Spolupraca(idZam2, uroven));
-		Zam2.novaSpolupraca(new Spolupraca(idZam1, uroven));
+		
+		//osetrenie duplicitnej spoluprace ; kostrbate ale funguje
+		boolean ex1 = false; //musia byt 2 prem. "existuje", inak bude nespravne priradovat
+		boolean ex2 = false;
+		for(Spolupraca sp : Zam1.getSpoluprace()) {
+			if(sp.getIdKolegu() == idZam2) {
+				sp.setUroven(uroven);
+				System.out.println("UPOZORNENIE: Doslo k prepisu uz existujucej spoluprace");
+				ex1 = true;
+				break;
+			}
+		}
+		if(!ex1) {
+			Zam1.novaSpolupraca(new Spolupraca(idZam2, uroven));
+		}
+		
+		for(Spolupraca sp : Zam2.getSpoluprace()) {
+			if(sp.getIdKolegu() == idZam1) {
+				sp.setUroven(uroven);
+				ex2 = true;
+				break;
+			}
+		}
+		if(!ex2) {
+			Zam2.novaSpolupraca(new Spolupraca(idZam1, uroven));
+		}
+	}
+	
+	//metodu triedenia do skupin treba potom aplikovat aj na triedenie zoznamu
+	public void pocetVSkupinach() {
+		int dAnalytici = 0;
+		int bSpecialisti = 0;
+		
+		for(Zamestnanec zam : zoznamZamestnancov.values()) {
+			if(zam instanceof DatovyAnalytik) {
+				dAnalytici++;
+			} else if(zam instanceof BezpecnostnySpecialista) {
+				bSpecialisti++;
+			}
+		}
+		System.out.println("Datovi analytici: " + dAnalytici);
+		System.out.println("Bezpecnostni specialisti: " + bSpecialisti);
 	}
 }
 
-//doplnit system odoberania spoluprac a osetrenie duplicitnej spoluprace
+
 
