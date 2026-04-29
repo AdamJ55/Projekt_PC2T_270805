@@ -17,9 +17,11 @@ public class Main {
 		System.out.println("1 : Pridanie noveho zamestnanca");
 		System.out.println("2 : Odstranenie zamestnanca");
 		System.out.println("3 : Vyhladanie zamestnanca podla ID");
-		System.out.println("4 : Vypis databazy zamestnancov"); // musi byt abecedne + ROZDELENE PODLA PROFESIE
+		System.out.println("4 : Vypis databazy zamestnancov");
 		System.out.println("5 : Vypis poctu zamestnancov v skupinach"); 
 		System.out.println("6 : Vytvorenie novej spoluprace");
+		System.out.println("7 : Spustenie profesnej vlastnosti");
+		System.out.println("8 : Vypis statistik");
 		
 		int volba = sc.nextInt();
 		
@@ -72,6 +74,7 @@ public class Main {
 					break;
 					
 				case 6:
+					
 					System.out.println("---NOVA SPOLUPRACA---");
 					System.out.println("Id zamestnanca: ");
 					int idZam1 = sc.nextInt();
@@ -80,10 +83,35 @@ public class Main {
 					System.out.println("Uroven spoluprace (zla/priemerna/dobra)");
 					String uroven = sc.next();
 					
-					db.novaSpolupraca(idZam1, idZam2, uroven);
+					if(uroven.equals("zla") || uroven.equals("priemerna") || uroven.equals("dobra")) {
+						db.novaSpolupraca(idZam1, idZam2, uroven);
+						break;
+					} else {
+						System.out.println("CHYBA: Nezadali ste platnu uroven spoluprace");
+					}
 					System.out.println("");
-					break;
+						break;
 				case 7:
+					System.out.println("---SPUSTENIE VLASTNOSTI ZAMESTNANCA---");
+					System.out.println("Id zamestnanca: ");
+					int idZam = sc.nextInt();
+					Zamestnanec zam = db.getZamestnanec(idZam);
+					
+					if(zam == null) {
+						System.out.println("CHYBA: Zamestnanec s ID ktore ste zadali neexistuje");
+					} else {
+						zam.schopnost(db);
+					}
+					System.out.println("");
+						
+					break;
+				case 8:
+					System.out.println("---STATISTIKY---");
+					db.statistiky();
+					System.out.println("");
+					
+					break;
+				case 9:
 					break;
 				case 0:
 					run=false;

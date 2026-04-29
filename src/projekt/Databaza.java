@@ -11,9 +11,15 @@ public class Databaza {
 	private Map<Integer, Zamestnanec> zoznamZamestnancov;
 	private int defId = 1;
 	
-	
+	public Zamestnanec getZamestnanec(int id) {
+		return getZoznamZamestnancov().get(id);
+	}
 	public Databaza() {
 		zoznamZamestnancov = new HashMap<>();
+	}
+	
+	public Map<Integer, Zamestnanec> getZoznamZamestnancov() {
+		return zoznamZamestnancov;
 	}
 	
 	//pridanie zamestnanca do databazy
@@ -39,11 +45,20 @@ public class Databaza {
 	public void vypisZamestnancov() {
 		List<Zamestnanec> zoznam = new ArrayList<>(zoznamZamestnancov.values());
 		zoznam.sort(Comparator.comparing(Zamestnanec::getPriezvisko)); //abecedne zoradenie podla PRIEZVISKA
-		
-		for (Zamestnanec zam : zoznam) {
-			zam.vypisInfo();
+		System.out.println("-----------------|Datovi analytici|-----------------");
+		for (Zamestnanec zam : zoznam) { //vypis podla skupin
+			if(zam instanceof BezpecnostnySpecialista) {
+				continue;
+			} else if(zam instanceof DatovyAnalytik) {
+				zam.vypisInfo();	
+				}	
 		}
-			
+		System.out.println("-------------|Bezpecnostni specialisti|-------------");
+		for (Zamestnanec zam : zoznam) {
+		if(zam instanceof BezpecnostnySpecialista) {
+			zam.vypisInfo();
+			}
+		}
 	}
 	
 	public void vyhladavac(int id) {
@@ -72,6 +87,7 @@ public class Databaza {
 				System.out.println(kolega.getPriezvisko() + ", " + kolega.getMeno() + " | ID: " + kolega.getId() + " | Uroven spoluprace: " + uroven);
 			}
 		}
+		System.out.println("");
 	}
 	
 	
@@ -109,6 +125,7 @@ public class Databaza {
 		if(!ex2) {
 			Zam2.novaSpolupraca(new Spolupraca(idZam1, uroven));
 		}
+		System.out.println("Stav spoluprace medzi zamestnancami: " + uroven);
 	}
 	
 	//metodu triedenia do skupin treba potom aplikovat aj na triedenie zoznamu
@@ -123,8 +140,61 @@ public class Databaza {
 				bSpecialisti++;
 			}
 		}
-		System.out.println("Datovi analytici: " + dAnalytici);
-		System.out.println("Bezpecnostni specialisti: " + bSpecialisti);
+		System.out.println("Pocet zamestnancov firmy: " + (dAnalytici + bSpecialisti));
+		System.out.println("-> Datovi analytici: " + dAnalytici);
+		System.out.println("-> Bezpecnostni specialisti: " + bSpecialisti);
+	}
+	
+	public void statistiky() {
+		int zla = 0;
+		int priemerna = 0;
+		int dobra = 0;
+		Zamestnanec najviac = null;
+		int maxVazieb = 0;
+		
+		for(Zamestnanec zam : zoznamZamestnancov.values()) {
+			int pocet = zam.getSpoluprace().size();
+			if(pocet > maxVazieb) {
+				maxVazieb = pocet;
+				najviac = zam;
+			} else if(pocet == maxVazieb) {
+				najviac = null;
+			}
+			for(Spolupraca sp : zam.getSpoluprace()) {
+				String uroven = sp.getUroven();
+				if(uroven.equals("zla")) {
+					zla++;
+				} else if(uroven.equals("priemerna")) {
+					priemerna++;
+				} else if(uroven.equals("dobra")) {
+					dobra++;
+				}
+			}	
+		}
+		
+		if(najviac != null) {
+			System.out.println("Zamestnanec s najvacsim poctom spoluprac: ");
+			najviac.vypisInfo();
+			System.out.println("Pocet spoluprac: " + maxVazieb);
+		} else {
+			System.out.println("Ziaden zo zamestnancov nema v pocte spoluprac dominantne postavenie");
+		}
+		
+		if(zla > priemerna && zla > dobra) {
+			System.out.println("Prevazujuca kvalita spoluprace: ZLA");
+		} else if(priemerna > zla && priemerna > dobra) {
+			System.out.println("Prevazujuca kvalita spoluprace: PRIEMERNA");
+		} else if(dobra > zla && dobra > priemerna) {
+			System.out.println("Prevazujuca kvalita spoluprace: DOBRA");
+		} else if(zla > dobra && zla == priemerna) {
+			System.out.println("Prevazujuce kvality spoluprace: PRIEMERNA, ZLA");
+		} else if(dobra > zla && dobra == priemerna) {
+			System.out.println("Prevazujuce kvality spoluprace: DOBRA, PRIEMERNA");
+		} else if(dobra > priemerna && dobra == zla) {
+			System.out.println("Prevazujuce kvality spoluprace: DOBRA, ZLA");
+		} else {
+			System.out.println("Kvalita spoluprace je vo vyrovnanom stave");
+		}
 	}
 }
 

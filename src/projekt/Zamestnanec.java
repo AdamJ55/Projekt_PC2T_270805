@@ -3,7 +3,7 @@ package projekt;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Zamestnanec {
+public abstract class Zamestnanec {
 	private int id;
 	private String meno;
 	private String priezvisko;
@@ -11,6 +11,7 @@ public class Zamestnanec {
 	private int profesia;
 	private String strProfesia;
 	private List<Spolupraca> spoluprace;
+	public abstract void schopnost(Databaza db);
 	
 
 	public Zamestnanec(int id, String meno, String priezvisko, int rokNarodenia, int profesia, String strProfesia) {
