@@ -1,11 +1,17 @@
 package projekt;
 
 import java.util.Map;
+import java.util.Scanner;
 import java.util.HashMap;
 import java.util.List;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
-
 
 public class Databaza {
 	private Map<Integer, Zamestnanec> zoznamZamestnancov;
@@ -22,9 +28,8 @@ public class Databaza {
 		return zoznamZamestnancov;
 	}
 	
-	//pridanie zamestnanca do databazy
 	public void novyZamestnanec(String meno, String priezvisko, int rokNarodenia, int profesia, String strProfesia){
-		Zamestnanec zam; //upraveny system pre priradenie profesie ako triedy 
+		Zamestnanec zam; 
 		if(profesia == 1) {	
 			zam = new DatovyAnalytik(defId++, meno, priezvisko, rokNarodenia, profesia, strProfesia);
 		} else {
@@ -33,7 +38,7 @@ public class Databaza {
 		zoznamZamestnancov.put(zam.getId(), zam);	
 	}
 	
-	//odobratie zamestnanca z databazy
+	
 	public void odstranZamestnanca(int id) {
 		zoznamZamestnancov.remove(id);
 		for(Zamestnanec zam : zoznamZamestnancov.values()) {
@@ -41,12 +46,11 @@ public class Databaza {
 		}
 	}
 	
-	//vypis zamestnancov
 	public void vypisZamestnancov() {
 		List<Zamestnanec> zoznam = new ArrayList<>(zoznamZamestnancov.values());
-		zoznam.sort(Comparator.comparing(Zamestnanec::getPriezvisko)); //abecedne zoradenie podla PRIEZVISKA
+		zoznam.sort(Comparator.comparing(Zamestnanec::getPriezvisko));
 		System.out.println("-----------------|Datovi analytici|-----------------");
-		for (Zamestnanec zam : zoznam) { //vypis podla skupin
+		for (Zamestnanec zam : zoznam) {
 			if(zam instanceof BezpecnostnySpecialista) {
 				continue;
 			} else if(zam instanceof DatovyAnalytik) {
@@ -78,7 +82,7 @@ public class Databaza {
 		for(Spolupraca s : kol) {
 			int idKolegu = s.getIdKolegu();
 			if(idKolegu == zam.getId()) {
-				continue; //oprava vypisu seba sameho v zozname spoluprac
+				continue;
 			}
 			String uroven = s.getUroven();
 			Zamestnanec kolega = zoznamZamestnancov.get(idKolegu);
@@ -87,12 +91,9 @@ public class Databaza {
 				System.out.println(kolega.getPriezvisko() + ", " + kolega.getMeno() + " | ID: " + kolega.getId() + " | Uroven spoluprace: " + uroven);
 			}
 		}
-		System.out.println("");
 	}
 	
-	
-	
-	public void novaSpolupraca(int idZam1, int idZam2, String uroven) { //OPRAVENE
+	public void novaSpolupraca(int idZam1, int idZam2, String uroven) {
 		Zamestnanec Zam1 = zoznamZamestnancov.get(idZam1);
 		Zamestnanec Zam2 = zoznamZamestnancov.get(idZam2);
 		if(Zam1 == null || Zam2 == null) {
@@ -100,8 +101,7 @@ public class Databaza {
 			return;
 		}
 		
-		//osetrenie duplicitnej spoluprace ; kostrbate ale funguje
-		boolean ex1 = false; //musia byt 2 prem. "existuje", inak bude nespravne priradovat
+		boolean ex1 = false;
 		boolean ex2 = false;
 		for(Spolupraca sp : Zam1.getSpoluprace()) {
 			if(sp.getIdKolegu() == idZam2) {
@@ -128,7 +128,27 @@ public class Databaza {
 		System.out.println("Stav spoluprace medzi zamestnancami: " + uroven);
 	}
 	
-	//metodu triedenia do skupin treba potom aplikovat aj na triedenie zoznamu
+	public void odstranSpolupracu(int idZam1, int idZam2) {
+		Zamestnanec Zam1 = zoznamZamestnancov.get(idZam1);
+		Zamestnanec Zam2 = zoznamZamestnancov.get(idZam2);
+		if(Zam1 == null || Zam2 == null) {
+			System.out.println("CHYBA: Zamestnanec s ID ktore ste zadali neexistuje");
+			return;
+		}
+		
+		for(int i = 0; i < Zam1.getSpoluprace().size(); i++) {
+			if(Zam1.getSpoluprace().get(i).getIdKolegu() == idZam2) {
+				Zam1.getSpoluprace().remove(i);
+			}
+		}
+		for(int i = 0; i < Zam2.getSpoluprace().size(); i++) {
+			if(Zam2.getSpoluprace().get(i).getIdKolegu() == idZam1) {
+				Zam2.getSpoluprace().remove(i);
+			}
+		}
+		System.out.println("Spolupraca medzi zamesntancami c. " + idZam1 + " a " + idZam2 + " bola odstranena");
+	}
+
 	public void pocetVSkupinach() {
 		int dAnalytici = 0;
 		int bSpecialisti = 0;
@@ -196,7 +216,78 @@ public class Databaza {
 			System.out.println("Kvalita spoluprace je vo vyrovnanom stave");
 		}
 	}
+	
+	public boolean ulozitDoSuboru(String nazovSuboru) {
+		try {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(nazovSuboru));
+			bw.write(String.valueOf(zoznamZamestnancov.size()));
+			bw.newLine();
+			for(Zamestnanec zam : zoznamZamestnancov.values()) {
+				bw.write(zam.getId() + " " + zam.getMeno() + " " + zam.getPriezvisko() + " " + zam.getRok() + " " + zam.getProfesia());
+				bw.newLine();
+			}
+			bw.write("Spoluprace:");
+			bw.newLine();
+			for(Zamestnanec zam : zoznamZamestnancov.values()) {
+				for(Spolupraca sp : zam.getSpoluprace()) {
+					if(zam.getId() < sp.getIdKolegu()) {
+						bw.write(zam.getId() + " " + sp.getIdKolegu() + " " + sp.getUroven());
+						bw.newLine();
+					}	
+				}
+			}
+			bw.close();
+			System.out.println("Databaza bola uspesne ulozena do suboru " + nazovSuboru);
+			return true;
+		}
+		catch(IOException e) {
+			System.out.println("CHYBA: Databazu sa nepodarilo ulozit do suboru");
+			return false;
+		}	
+	}
+	
+	public boolean nacitatZoSuboru(String nazovSuboru) {
+		  try {
+			  Scanner sc = new Scanner(new File(nazovSuboru));
+			  int pocet = sc.nextInt();
+			  for(int i = 0 ; i < pocet ; i++) {
+				  int id = sc.nextInt();
+				  String meno = sc.next();
+				  String priezvisko = sc.next();
+				  int rokNarodenia = sc.nextInt();
+				  int profesia = sc.nextInt();
+				  String strProfesia;
+				  if(profesia == 1) {
+					  strProfesia = "Datovy analytik";
+				  } else {
+					  strProfesia = "Bezpecnostny specialista";
+				  }
+
+				  Zamestnanec zam;
+				  if(profesia == 1) {	
+						zam = new DatovyAnalytik(id, meno, priezvisko, rokNarodenia, profesia, strProfesia);
+					} else {
+						zam = new BezpecnostnySpecialista(id, meno, priezvisko, rokNarodenia, profesia, strProfesia);
+					}
+				  zoznamZamestnancov.put(id, zam);
+				  if(id >= defId) {
+					  defId = id + 1;
+				  }
+			  }
+			  sc.next();
+			  while(sc.hasNext()) {
+				  int id1 = sc.nextInt();
+				  int id2 = sc.nextInt();
+				  String uroven = sc.next();
+				  novaSpolupraca(id1, id2, uroven);
+			  }
+			  sc.close();
+			  System.out.println("Databaza bola uspesne nacitana zo suboru " + nazovSuboru);
+			  return true;
+		  }
+		  catch(IOException e) {
+			  System.out.println("CHYBA: Databazu sa nepodarilo nacitat zo suboru");
+			  return false;
+		  }
+	}
 }
-
-
-

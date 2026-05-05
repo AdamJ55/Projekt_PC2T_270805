@@ -10,7 +10,6 @@ public class BezpecnostnySpecialista extends Zamestnanec{
 	@Override
 	public void schopnost(Databaza db) {
 		List<Spolupraca> spoluprace = this.getSpoluprace();
-		//Do MAIN doplnit vypis informacii o specialistovi + pocet spolupracovnikov
 		if(spoluprace.isEmpty()) {
 			System.out.println("CHYBA: Tento bezp. specialista nema priradene ziadne spoluprace");
 			return;
@@ -19,7 +18,7 @@ public class BezpecnostnySpecialista extends Zamestnanec{
 		double sucet = 0;
 		for(Spolupraca sp : spoluprace) {
 			String ur = sp.getUroven();
-			if(ur.equals("zla")) { //nutne pouzit .equals, "==" tu NEFUNGUJE
+			if(ur.equals("zla")) { 
 				sucet += 0;
 			} else if(ur.equals("priemerna")) {
 				sucet += 0.5;

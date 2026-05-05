@@ -40,6 +40,10 @@ public abstract class Zamestnanec {
 		return priezvisko;
 	}
 	
+	public int getRok() {
+		return rokNarodenia;
+	}
+	
 	public int getProfesia() {
 		return profesia;
 	}

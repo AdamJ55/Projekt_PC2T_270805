@@ -6,7 +6,7 @@ public class DatovyAnalytik extends Zamestnanec {
 		super(id, meno, priezvisko, rokNarodenia, profesia, strProfesia);
 	}
 	@Override
-	public void schopnost(Databaza db) { //pocita sameho seba ako kolegu - OPRAVENE
+	public void schopnost(Databaza db) {
 		int max = 0;
 		Zamestnanec najviac = null;
 		boolean zhoda = false; 
@@ -48,13 +48,25 @@ public class DatovyAnalytik extends Zamestnanec {
 							}
 						}
 						if(pocet == max) {
-							System.out.println("ID: " + druhy.getId() + " (" + druhy.getPriezvisko() + ", " + druhy.getMeno() + " | " + druhy.getProfesia() + ")");
+							String strProfesia;
+							if(druhy.getProfesia() == 1) {
+								  strProfesia = "Datovy analytik";
+							  } else {
+								  strProfesia = "Bezpecnostny specialista";
+							  }
+							System.out.println("ID: " + druhy.getId() + " (" + druhy.getPriezvisko() + ", " + druhy.getMeno() + " | " + strProfesia + ")");
 						}
 					
 				}
 			} else {
+				String strProfesia;
+				if(najviac.getProfesia() == 1) {
+					  strProfesia = "Datovy analytik";
+				  } else {
+					  strProfesia = "Bezpecnostny specialista";
+				  }
 				System.out.println("Dany analytik ma najviac totoznych spolupracovnikov so zamestnancom c. " + najviac.getId());
-				System.out.println("(" + najviac.getPriezvisko() + ", " + najviac.getMeno() + " | " + najviac.getProfesia() + ")");
+				System.out.println("(" + najviac.getPriezvisko() + ", " + najviac.getMeno() + " | " + strProfesia + ")");
 			}
 			System.out.println("Pocet totoznych spolopracovnikov: " + max);
 		} else {
